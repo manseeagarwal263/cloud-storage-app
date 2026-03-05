@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - CloudStore</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f4ff; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 400px; }
+        h2 { text-align: center; color: #4A90E2; margin-bottom: 30px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+        button { width: 100%; padding: 14px; background: #4A90E2; color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #357ABD; }
+        p { text-align: center; margin-top: 20px; color: #666; }
+        a { color: #4A90E2; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>☁️ Welcome Back</h2>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+        <p>Don't have an account? <a href="/register">Register</a></p>
+    </div>
+    <script>
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            fetch('/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email, password})
+            }).then(r => r.json()).then(data => {
+                if(data.success) window.location.href = '/dashboard';
+                else alert(data.message);
+            });
+        }
+    </script>
+</body>
+</html>

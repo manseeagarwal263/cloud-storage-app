@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - CloudStore</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f4ff; }
+        .navbar { background: #4A90E2; padding: 15px 30px; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .navbar span { font-size: 22px; font-weight: bold; }
+        .navbar a { color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 6px; }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .upload-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 30px; text-align: center; border: 2px dashed #4A90E2; }
+        .upload-box h3 { color: #4A90E2; margin-bottom: 15px; font-size: 20px; }
+        input[type="file"] { margin: 10px 0; font-size: 16px; }
+        button { padding: 12px 30px; background: #4A90E2; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #357ABD; }
+        .files-section h3 { font-size: 22px; color: #333; margin-bottom: 15px; }
+        table { width: 100%; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-collapse: collapse; overflow: hidden; }
+        th { background: #4A90E2; color: white; padding: 15px; text-align: left; }
+        td { padding: 15px; border-bottom: 1px solid #eee; }
+        tr:last-child td { border-bottom: none; }
+        .empty { text-align: center; color: #999; padding: 40px; }
+        a.view-btn { color: #4A90E2; text-decoration: none; }
+        a.del-btn { color: red; text-decoration: none; margin-left: 15px; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <span>☁️ CloudStore</span>
+        <div>Welcome, {{ username }}! &nbsp; <a href="/logout">Logout</a></div>
+    </div>
+    <div class="container">
+        <div class="upload-box">
+            <h3>📁 Upload a File</h3>
+            <input type="file" id="fileInput">
+            <br>
+            <button onclick="uploadFile()">Upload to Cloud ☁️</button>
+            <p id="uploadStatus" style="margin-top:10px; color:green;"></p>
+        </div>
+        <div class="files-section">
+            <h3>Your Files</h3>
+            <table>
+                <tr>
+                    <th>Filename</th><th>Size</th><th>Date</th><th>Actions</th>
+                </tr>
+                {% if files %}
+                    {% for file in files %}
+                    <tr>
+                        <td>{{ file[2] }}</td>
+                        <td>{{ file[5] }} KB</td>
+                        <td>{{ file[4] }}</td>
+                        <td>
+                            <a class="view-btn" href="{{ file[3] }}" target="_blank">View</a>
+                            <a class="del-btn" href="/delete/{{ file[0] }}">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="4" class="empty">No files yet. Upload your first file! 👆</td></tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+    <script>
+        function uploadFile() {
+            const file = document.getElementById('fileInput').files[0];
+            if (!file) { alert('Please select a file first!'); return; }
+            const formData = new FormData();
+            formData.append('file', file);
+            document.getElementById('uploadStatus').innerText = 'Uploading...';
+            fetch('/upload', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                if(data.success) {
+                    document.getElementById('uploadStatus').innerText = '✅ Uploaded!';
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    document.getElementById('uploadStatus').innerText = '❌ ' + data.message;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
