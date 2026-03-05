@@ -19,5 +19,4 @@ A web-based file storage application built with Python Flask and SQLite.
 3. Run: `python app.py`
 4. Open: `http://127.0.0.1:5000`
 
-## 📸 Screenshots
-(Add screenshots of your app here)
+
